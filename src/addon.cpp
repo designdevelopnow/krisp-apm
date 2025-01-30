@@ -21,7 +21,11 @@ class KrispAudioProcessor : public Napi::ObjectWrap<KrispAudioProcessor<SampleTy
 public:
     ~KrispAudioProcessor() override {
         if (m_ncSession) {
-            m_ncSession.reset();
+            try {
+                m_ncSession.reset();
+            } catch (const std::exception& e) {
+                std::cerr << "Error during NC session cleanup: " << e.what() << std::endl;
+            }
         }
     }
 
@@ -200,15 +204,8 @@ Napi::Value KrispAudioProcessor<SampleType>::processFrames(const Napi::CallbackI
 }
 
 void CleanupKrisp(void*) {
-    try {
-        globalDestroy();
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error during cleanup: " << e.what() << std::endl;
-    }
-    catch (...) {
-        std::cerr << "Unknown error during cleanup" << std::endl;
-    }
+    // We don't need to call globalDestroy() as it might affect other processes
+    // The OS will clean up resources when the process exits
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {

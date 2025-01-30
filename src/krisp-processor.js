@@ -30,6 +30,13 @@ class KrispProcessor {
         const frameSizeInSamples = this.getFrameSize();
         const frameSizeInBytes = frameSizeInSamples * this.sampleSize;
         const numberOfFrames = Math.floor(audioData.length / frameSizeInBytes);
+
+        // Check if we have any remaining samples that don't make a complete frame
+        const remainingBytes = audioData.length % frameSizeInBytes;
+        if (remainingBytes > 0) {
+            console.warn(`Warning: ${remainingBytes} bytes (${remainingBytes / this.sampleSize} samples) at the end of the audio data will be ignored as they don't make a complete frame`);
+        }
+
         const processedAudio = Buffer.alloc(numberOfFrames * frameSizeInBytes);
         
         for (let i = 0; i < numberOfFrames; i++) {
