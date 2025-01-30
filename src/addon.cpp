@@ -118,7 +118,7 @@ Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo&
 
         m_krispSampleRate = samplingRateResult.first;
         constexpr FrameDuration frameDuration = FrameDuration::Fd10ms;
-        m_frameSize = static_cast<unsigned int>(m_krispSampleRate) * static_cast<unsigned int>(frameDuration) / 1000;
+        m_frameSize = static_cast<unsigned int>(sampleRate) * static_cast<unsigned int>(frameDuration) / 1000;
         m_frameSizeInBytes = m_frameSize * sizeof(SampleType);
 
         std::wstring_convert<std::codecvt_utf8<wchar_t>> wstringConverter;
@@ -210,7 +210,7 @@ void CleanupKrisp(void*) {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     try {
-        globalInit(L"");
+        globalInit(L"");  // Empty string for default working path
     }
     catch (const std::exception& ex) {
         Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
@@ -221,7 +221,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
         return Napi::Object::New(env);
     }
 
-    KrispAudioProcessor<float>::Init(env, exports, "KrispAudioProcessorPcmFloat");
     KrispAudioProcessor<int16_t>::Init(env, exports, "KrispAudioProcessorPcm16");
     napi_add_env_cleanup_hook(env, CleanupKrisp, nullptr);
 

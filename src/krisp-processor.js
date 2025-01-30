@@ -18,36 +18,36 @@ class KrispProcessor {
             throw new Error('Krisp processor is already initialized');
         }
 
+        if (!addon.KrispAudioProcessorPcm16) {
+            throw new Error('Native addon not properly loaded');
+        }
+
         this.processor = new addon.KrispAudioProcessorPcm16();
         this.processor.configure(this.modelPath, this.sampleRate, this.noiseSuppressionLevel);
     }
 
-    processFrames(audioData) {
+    processFrames(inputBuffer, outputBuffer) {
         if (!this.processor) {
             throw new Error('Krisp processor is not initialized');
         }
 
+        if (!Buffer.isBuffer(inputBuffer) || !Buffer.isBuffer(outputBuffer)) {
+            throw new Error('Input and output must be Buffer objects');
+        }
+
+        if (inputBuffer.length !== outputBuffer.length) {
+            throw new Error('Input and output buffers must have the same length');
+        }
+
         const frameSizeInSamples = this.getFrameSize();
         const frameSizeInBytes = frameSizeInSamples * this.sampleSize;
-        const numberOfFrames = Math.floor(audioData.length / frameSizeInBytes);
 
-        // Check if we have any remaining samples that don't make a complete frame
-        const remainingBytes = audioData.length % frameSizeInBytes;
-        if (remainingBytes > 0) {
-            console.warn(`Warning: ${remainingBytes} bytes (${remainingBytes / this.sampleSize} samples) at the end of the audio data will be ignored as they don't make a complete frame`);
+        if (inputBuffer.length < frameSizeInBytes) {
+            throw new Error('Input buffer too small for one frame');
         }
 
-        const processedAudio = Buffer.alloc(numberOfFrames * frameSizeInBytes);
-        
-        for (let i = 0; i < numberOfFrames; i++) {
-            const start = i * frameSizeInBytes;
-            const end = start + frameSizeInBytes;
-            const frame = audioData.subarray(start, end);
-            const processedFrame = processedAudio.slice(start, end);
-            this.processor.processFrames(frame, processedFrame);
-        }
-        
-        return processedAudio;
+        // Process frames directly into output buffer
+        this.processor.processFrames(inputBuffer, outputBuffer);
     }
 }
 
