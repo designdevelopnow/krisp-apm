@@ -1,11 +1,13 @@
 services:
   krisp-apm:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: caretalk/krisp-apm:v1
     ports:
       - "3344:3344"
       - "3345:3345"
     volumes:
-      - ./krisp:/usr/src/app/krisp
       - ./logs:/usr/src/app/logs
       - .env:/usr/src/app/.env
     restart: unless-stopped

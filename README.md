@@ -98,3 +98,38 @@ This endpoint returns:
 - Active connections
 - Total connections
 - Peak connections
+
+
+## Deploy using docker
+
+### Build Image
+```bash
+docker compose build
+docker save -o caretalk-krisp-apm-v1.tar caretalk/krisp-apm:v1
+gzip caretalk-krisp-apm-v1.tar
+```
+### Copy image
+```bash
+scp caretalk-krisp-apm-v1.tar.gz user@remote_host:~/
+```
+
+### Load image
+```
+sudo docker load -i caretalk-krisp-apm-v1.tar.gz
+```
+
+### Run 
+
+# Prod
+
+```bash
+sudo docker stop caretalk-krisp-apm
+sudo docker rm caretalk-krisp-apm
+sudo docker run -d \
+  -p 9000:8080 \
+  -e SSL_MODE="off" \
+  -v /opt/caretalk-krisp-apm/logs:/usr/src/app/logs \
+  -v /opt/caretalk-krisp-apm/.env:/usr/src/app/.env \
+  --name caretalk-krisp-apm \
+  caretalk/krisp-apm:v1
+```

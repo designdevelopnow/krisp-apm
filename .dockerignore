@@ -1,9 +1,19 @@
-node_modules
-npm-debug.log
-build
-logs
-.env
-.git
-.gitignore
-README.md
-clean.wav
+# Ignore everything
+*
+
+# Allow specific files and directories
+!package.json
+!package-lock.json
+!src/
+!cmake/
+!ecosystem.config.js
+!makefile
+!krisp
+
+# But still ignore these even if they're in allowed directories
+**/node_modules
+**/.DS_Store
+**/*.log
+**/.env
+**/build
+**/logs
