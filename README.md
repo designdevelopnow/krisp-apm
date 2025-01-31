@@ -1,59 +1,100 @@
-# Caretalk APM using Krisp
-## Overview
+# Krisp APM Server
 
-## Build Dependencies
-The reference samples require
-* **libsndfile** library to read and write WAV files
-* Krisp SDK package with archive libraries for the noise canceling
+A Node.js server for audio processing using Krisp SDK.
 
-The following environment variables are mandatory. The name of each parameter is self-explanatory.
-* KRISP_SDK_PATH
-* LIBSNDFILE_INC
-* LIBSNDFILE_LIB
+## Prerequisites
 
-KRISP_SDK_PATH should point to the Krisp SDK package directory.
+- Node.js 20.x or higher
+- npm
+- cmake
+- build-essential
+- libsndfile1-dev
 
-LIBSNDFILE_INC and LIBSNDFILE_LIB directories is required by the sample-nc app for the purpose of reading and writing WAV PCM-based audio files. It is not the SDK requirement.
+## Installation
 
+1. Clone the repository:
+```bash
+git clone git@github.com:designdevelopnow/krisp-apm.git
+cd krisp-apm
+```
 
-### On Ubuntu
-```apt install libsndfile1 libsndfile1-dev```
+2. Install dependencies:
+```bash
+npm install
+```
 
+3. Build the native module:
+```bash
+make
+```
 
-## Build Process
+## Running the Server
 
-How to run the build
+### Using Node.js Directly
 
+1. Start the server:
+```bash
+node src/server/server.js
+```
 
-## NodeJS Module Dependencies
-**Node** v20 or above. **NAPI** Version 9.
-In addition to above depencies you will need the **npm**, and deps defined in the
-src/sample-node/package.json.
+2. Run the test client:
+```bash
+node src/client/test-client.js <path-to-wav-file>
+```
 
-The **NODE_INC** environement variable should be set to the include directory of the installed
-**Node**.
+### Using PM2
 
-On Ubuntu Linux with nvm it could be the ```$HOME/.nvm/versions/node/v22.9.0/include/node```
-if installed locally.
+1. Start the server with PM2:
+```bash
+pm2 start ecosystem.config.js
+```
 
-## Build Node Module
+2. View logs:
+```bash
+pm2 logs
+```
 
-### On Linux run
-```make```
+3. Monitor the application:
+```bash
+pm2 monit
+```
 
+4. Stop the server:
+```bash
+pm2 stop ecosystem.config.js
+```
 
-## Build Output
-All apps will be stored inside the **bin** folder in the root directory
+### Using Docker
 
+1. Build and start using Docker Compose:
+```bash
+docker-compose up --build
+```
 
+2. Stop the container:
+```bash
+docker-compose down
+```
 
-## Using cli
+## Environment Variables
 
+Create a `.env` file in the root directory with the following variables:
 
-```node src/cli.js -i <PCM16 wav file> -o <output WAV file path> -m <path to the AI model> -n <noise suppression level 0-100>```
+```env
+NODE_ENV=production
+PORT=3000
+KRISP_MODEL_PATH=./krisp/models/c7.n.s.9f4389.kef
+MAX_CONNECTIONS=10
+```
 
-eg:
+## Metrics
 
-```node src/client/test-client.js data/audio/dog-bark.wav clean.wav
+Server metrics are available at:
+```
+http://localhost:3001
+```
 
-
+This endpoint returns:
+- Active connections
+- Total connections
+- Peak connections

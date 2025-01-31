@@ -1,5 +1,5 @@
 {
-    "name": "@caretalk/apm-krisp",
+    "name": "@caretalk/krisp-apm",
     "version": "1.0.0",
     "description": "Caretalk APM using Krisp",
     "main": "index.js",
