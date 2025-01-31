@@ -1,4 +1,5 @@
 const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 module.exports = {
   apps: [{
@@ -6,22 +7,19 @@ module.exports = {
     script: 'src/server/server.js',
     instances: 1,
     exec_mode: 'fork',
-    max_memory_restart: '1G',
+    max_memory_restart: '2G',
 
     // Environment variables
     env: {
-      NODE_ENV: 'production',
-      PORT: 3344,
-      METRICS_PORT: 3345,
-      KRISP_MODEL_PATH: './krisp/models/c7.n.s.9f4389.kef',
-      MAX_CONNECTIONS: 10
+      NODE_ENV: process.env.NODE_ENV || 'production',
+      PORT: process.env.PORT || 3344,
+      METRICS_PORT: process.env.METRICS_PORT || 3345,
+      KRISP_MODEL_PATH: process.env.KRISP_MODEL_PATH || './krisp/models/c7.n.s.9f4389.kef',
+      MAX_CONNECTIONS: process.env.MAX_CONNECTIONS || 10
     },
     
-    // Load environment variables from .env
-    env_file: path.resolve(__dirname, '.env'),
-
     error_file: 'logs/err.log',
-    out_file: 'logs/out.log',
+    out_file: 'logs/app.log',
     time: true,
     log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
     merge_logs: true,

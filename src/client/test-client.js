@@ -3,7 +3,7 @@ const fs = require('fs');
 const { WaveFile } = require('wavefile');
 
 class AudioClient {
-    constructor(host = 'localhost', port = 3000) {
+    constructor(host = 'localhost', port = 3344) {
         this.host = host;
         this.port = port;
         this.client = new net.Socket();

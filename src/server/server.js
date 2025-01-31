@@ -156,7 +156,7 @@ class AudioServer {
         this.server = null;
         this.options = {
             maxConnections: options.maxConnections || 50,
-            healthCheckPort: options.healthCheckPort || (port + 1),
+            metricsPort: options.metricsPort || (port + 1),
             metricsInterval: options.metricsInterval || 5000, // 5 seconds for more frequent updates
             ...options
         };
@@ -250,11 +250,11 @@ class AudioServer {
         // Start servers
         this.server.listen(this.port, () => {
             console.log(`Audio processing server listening on port ${this.port}`);
-            console.log(`Health check server listening on port ${this.options.healthCheckPort}`);
+            console.log(`Health check server listening on port ${this.options.metricsPort}`);
             console.log(`Max connections: ${this.options.maxConnections}`);
         });
 
-        this.healthServer.listen(this.options.healthCheckPort);
+        this.healthServer.listen(this.options.metricsPort);
 
         // Start metrics reporting more frequently
         this.metricsInterval = setInterval(() => {
@@ -380,12 +380,12 @@ if (require.main === module) {
     }
 
     const port = parseInt(process.env.PORT) || 3344;
+    const metricsPort = parseInt(process.env.METRICS_PORT) || 3345;
     const maxConnections = parseInt(process.env.MAX_CONNECTIONS) || 10;
 
     const server = new AudioServer(port, modelPath, {
         maxConnections,
-        healthCheckPort: port + 1,
-        metricsInterval: 5000
+        metricsPort
     });
 
     server.start();
