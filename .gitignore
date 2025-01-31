@@ -4,3 +4,5 @@
 /Krisp-SDK-Sample-Apps
 /native
 /clean-audio
+/logs
+.env

@@ -9,6 +9,9 @@ class AudioClient {
         this.client = new net.Socket();
         this.startTime = null;
         this.totalFrames = 0;
+        this.connected = false;
+        this.retryCount = 0;
+        this.maxRetries = 5;
     }
 
     async processFile(inputFile, outputFile) {
@@ -43,6 +46,53 @@ class AudioClient {
             let processedData = Buffer.alloc(0);
             let totalBytesReceived = 0;
             let totalBytesSent = 0;
+            let frameIndex = 0;
+
+            const connect = () => {
+                if (this.retryCount >= this.maxRetries) {
+                    reject(new Error('Max retries exceeded'));
+                    return;
+                }
+
+                this.client.connect(this.port, this.host, () => {
+                    this.connected = true;
+                    this.startTime = process.hrtime.bigint();
+                    
+                    // Send audio data in frames with delay to prevent overwhelming the server
+                    const sendFrame = () => {
+                        if (!this.connected) return;
+
+                        const frame = audioData.slice(frameIndex * bytesPerFrame, (frameIndex + 1) * bytesPerFrame);
+                        if (frame.length === bytesPerFrame) {
+                            this.client.write(frame);
+                            totalBytesSent += frame.length;
+                            this.totalFrames++;
+                            frameIndex++;
+
+                            if (frameIndex * bytesPerFrame < audioData.length) {
+                                // Add small delay between frames
+                                setTimeout(sendFrame, 1);
+                            } else {
+                                // All frames sent
+                                this.client.end();
+                            }
+                        } else {
+                            // Handle last incomplete frame
+                            if (frame.length > 0) {
+                                const lastFrame = Buffer.alloc(bytesPerFrame);
+                                frame.copy(lastFrame);
+                                this.client.write(lastFrame);
+                                totalBytesSent += bytesPerFrame;
+                                this.totalFrames++;
+                            }
+                            this.client.end();
+                        }
+                    };
+
+                    // Start sending frames
+                    sendFrame();
+                });
+            };
 
             // Handle processed audio data from server
             this.client.on('data', (data) => {
@@ -51,6 +101,14 @@ class AudioClient {
             });
 
             this.client.on('close', () => {
+                this.connected = false;
+                if (processedData.length === 0 && this.retryCount < this.maxRetries) {
+                    console.log('Connection closed without data, retrying...');
+                    this.retryCount++;
+                    setTimeout(connect, 1000 * this.retryCount);
+                    return;
+                }
+
                 try {
                     // Create output WAV file
                     const outWav = new WaveFile();
@@ -79,36 +137,17 @@ class AudioClient {
             });
 
             this.client.on('error', (err) => {
+                if (!this.connected && this.retryCount < this.maxRetries) {
+                    console.log('Connection error, retrying...');
+                    this.retryCount++;
+                    setTimeout(connect, 1000 * this.retryCount);
+                    return;
+                }
                 reject(new Error(`Connection error: ${err.message}`));
             });
 
-            // Connect to server and send audio data
-            this.client.connect(this.port, this.host, () => {
-                this.startTime = process.hrtime.bigint();
-
-                // Send audio data in frames
-                for (let i = 0; i < audioData.length; i += bytesPerFrame) {
-                    const frame = audioData.slice(i, i + bytesPerFrame);
-                    if (frame.length === bytesPerFrame) {
-                        this.client.write(frame);
-                        totalBytesSent += frame.length;
-                        this.totalFrames++;
-                    }
-                }
-
-                // Handle last frame if it's not complete
-                const remaining = audioData.length % bytesPerFrame;
-                if (remaining > 0) {
-                    const lastFrame = Buffer.alloc(bytesPerFrame);
-                    audioData.copy(lastFrame, 0, audioData.length - remaining);
-                    this.client.write(lastFrame);
-                    totalBytesSent += bytesPerFrame;
-                    this.totalFrames++;
-                }
-
-                // Signal end of audio data
-                this.client.end();
-            });
+            // Start connection
+            connect();
         });
     }
 }

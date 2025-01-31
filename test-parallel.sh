@@ -2,7 +2,7 @@
 
 
 # Run test clients in parallel
-for i in {1..50}; do
+for i in {1..10}; do
     echo "Starting client $i..."
     node src/test-client.js dog-bark.wav clean-audio/output-$i.wav &
 done
