@@ -379,7 +379,7 @@ if (require.main === module) {
         process.exit(1);
     }
 
-    const port = parseInt(process.env.PORT) || 3000;
+    const port = parseInt(process.env.PORT) || 3344;
     const maxConnections = parseInt(process.env.MAX_CONNECTIONS) || 10;
 
     const server = new AudioServer(port, modelPath, {
