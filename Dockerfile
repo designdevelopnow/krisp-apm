@@ -11,9 +11,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g npm@latest && npm cache clean --force
-
-RUN npm install -g node-addon-api@latest node-gyp && npm cache clean --force
 
 WORKDIR /usr/src/app
 COPY package*.json ./
