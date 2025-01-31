@@ -1,0 +1,15 @@
+services:
+  krisp-apm:
+    build: .
+    ports:
+      - "3000:3000"
+      -  "3001:3001"
+    volumes:
+      - ./krisp:/usr/src/app/krisp
+      - ./logs:/usr/src/app/logs
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - KRISP_MODEL_PATH=./krisp/models/c7.n.s.9f4389.kef
+      - MAX_CONNECTIONS=10
+    restart: unless-stopped

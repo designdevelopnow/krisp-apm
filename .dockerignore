@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+build
+logs
+.env
+.git
+.gitignore
+README.md
+clean.wav
