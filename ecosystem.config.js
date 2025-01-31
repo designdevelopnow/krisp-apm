@@ -1,13 +1,23 @@
+const path = require('path');
+
 module.exports = {
   apps: [{
     name: 'krisp-apm',
     script: 'src/server/server.js',
-    instances: 1, // Single instance as Krisp needs exclusive access
+    instances: 1,
     exec_mode: 'fork',
     max_memory_restart: '1G',
 
-    // Load .env file
-    env_file: '.env',
+    // Environment variables
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000,
+      KRISP_MODEL_PATH: './krisp/models/c7.n.s.9f4389.kef',
+      MAX_CONNECTIONS: 10
+    },
+    
+    // Load environment variables from .env
+    env_file: path.resolve(__dirname, '.env'),
 
     error_file: 'logs/err.log',
     out_file: 'logs/out.log',
@@ -20,19 +30,8 @@ module.exports = {
     wait_ready: true,
     listen_timeout: 10000,
     
-    // Restart on memory usage
-    max_memory_restart: '1G',
-    
     // Auto restart
     autorestart: true,
-    watch: false,
-    
-    // Metrics
-    metrics: {
-      http: {
-        port: 3001,
-        host: 'localhost'
-      }
-    }
+    watch: false
   }]
 };

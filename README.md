@@ -47,15 +47,13 @@ All apps will be stored inside the **bin** folder in the root directory
 
 
 
-### Test input for the sample-nc app
+## Using cli
 
-## Node Module
-The sample imitates realtime PCM16 or FLOAT32 audio stream by reading PCM16/FLOAT32 WAV file.
-It uses Node based wrapper over Krisp Audio SDK to process audio data.  The processed output is
-stored in the WAV file.
 
-```cd src/sample-node```
+```node src/cli.js -i <PCM16 wav file> -o <output WAV file path> -m <path to the AI model> -n <noise suppression level 0-100>```
 
-```node index.js -i <PCM16 wav file> -o <output WAV file path> -m <path to the AI model> -n <noise suppression level 0-100>```
+eg:
+
+```node src/client/test-client.js data/audio/dog-bark.wav clean.wav
 
 

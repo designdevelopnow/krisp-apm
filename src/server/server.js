@@ -372,7 +372,7 @@ class AudioServer {
 
 // Start the server if this file is run directly
 if (require.main === module) {
-    const modelPath = process.env.KRISP_MODEL_PATH;
+    const modelPath = process.env.KRISP_MODEL_PATH
     
     if(!modelPath) {
         console.error('Error: KRISP_MODEL_PATH environment variable is not set');

@@ -7,4 +7,4 @@ ulimit -n 65535
 mkdir -p logs
 
 # Start with PM2
-pm2 start config/ecosystem.config.js --env production
+pm2 start ecosystem.config.js
