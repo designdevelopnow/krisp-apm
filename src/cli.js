@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { WaveFile } = require('wavefile');
-const KrispProcessor = require('./krisp-processor');
+const KrispProcessor = require('./lib/krisp-processor');
 
 class AudioProcessor {
     constructor(modelPath, sampleRate = 8000) {
@@ -49,7 +49,7 @@ class AudioProcessor {
 if (require.main === module) {
     const fs = require('fs');
     const { Command } = require('commander');
-    const KrispProcessor = require('./krisp-processor');
+    const KrispProcessor = require('./lib/krisp-processor');
 
     const program = new Command();
 

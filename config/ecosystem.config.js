@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'krisp-apm',
-    script: 'src/server.js',
+    script: 'src/server/server.js',
     instances: 1, // Single instance as Krisp needs exclusive access
     exec_mode: 'fork',
     max_memory_restart: '1G',

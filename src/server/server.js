@@ -1,6 +1,6 @@
 const net = require('net');
 const fs = require('fs');
-const KrispProcessor = require('./krisp-processor');
+const KrispProcessor = require('../lib/krisp-processor');
 const os = require('os');
 const http = require('http');
 

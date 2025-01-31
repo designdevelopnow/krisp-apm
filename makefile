@@ -1,4 +1,4 @@
-.PHONY: build run clean
+.PHONY: build run clean test
 
 KRISP_SDK_PATH := $(shell pwd)/krisp/sdk/krisp-audio-sdk-9.0.0-lin_x64-nc
 
@@ -11,10 +11,16 @@ build:
 		-D NODE_INC=${NODE_INC}
 	${MAKE} -C build VERBOSE=1
 
+run:
+	./bin/start-prod.sh
+
+test:
+	./bin/test-parallel.sh
+
 clean:
 	if [ -d "./build" ]; then \
 		rm -rf build; \
 	fi
-	if [ -d "./bin" ]; then \
-		rm -rf bin; \
+	if [ -d "./test/output" ]; then \
+		rm -rf test/output; \
 	fi

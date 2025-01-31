@@ -1,4 +1,4 @@
-const addon = require('../build/Release/caretalk-apm-krisp.node');
+const addon = require('../../build/Release/caretalk-apm-krisp.node');
 
 class KrispProcessor {
     constructor(modelPath, sampleRate, noiseSuppressionLevel = 100) {
