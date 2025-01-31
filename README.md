@@ -127,9 +127,14 @@ sudo docker stop caretalk-krisp-apm
 sudo docker rm caretalk-krisp-apm
 sudo docker run -d \
   -p 3344:3344 \
-  -e SSL_MODE="off" \
   -v /opt/caretalk-krisp-apm/logs:/usr/src/app/logs \
   -v /opt/caretalk-krisp-apm/.env:/usr/src/app/.env \
   --name caretalk-krisp-apm \
   caretalk/krisp-apm:v1
+```
+
+
+##### Using Cli
+```bash
+node src/cli.js -i data/audio/dog-bark.wav -o clean.wav -m krisp/models/c7.n.s.9f4389.kef 
 ```
