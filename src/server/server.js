@@ -17,7 +17,7 @@ const metrics = {
 };
 
 class AudioStreamProcessor {
-    constructor(socket, modelPath, sampleRate = 8000) {
+    constructor(socket, modelPath, sampleRate = 16000) {
         this.socket = socket;
         this.processor = null;
         this.modelPath = modelPath;
