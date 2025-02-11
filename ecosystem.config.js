@@ -14,7 +14,7 @@ module.exports = {
       NODE_ENV: process.env.NODE_ENV || 'production',
       PORT: process.env.PORT || 3344,
       METRICS_PORT: process.env.METRICS_PORT || 3345,
-      KRISP_MODEL_PATH: process.env.KRISP_MODEL_PATH || './krisp/models/c7.n.s.9f4389.kef',
+      KRISP_MODEL_PATH: process.env.KRISP_MODEL_PATH || './hs.c6.f.m.75df8f.kef',
       MAX_CONNECTIONS: process.env.MAX_CONNECTIONS || 10
     },
     
