@@ -23,19 +23,19 @@ public:
         if (m_ncSession) {
             try {
                 m_ncSession.reset();
-            } catch (const std::exception& e) {
+            } catch (const std::exception &e) {
                 std::cerr << "Error during NC session cleanup: " << e.what() << std::endl;
             }
         }
     }
 
-    static Napi::Object Init(Napi::Env env, Napi::Object exports, const char* nodeClassName) {
+    static Napi::Object Init(Napi::Env env, Napi::Object exports, const char *nodeClassName) {
         Napi::Function func = Napi::ObjectWrap<KrispAudioProcessor<SampleType>>::DefineClass(env, nodeClassName, {
             Napi::ObjectWrap<KrispAudioProcessor<SampleType>>::InstanceMethod("configure", &KrispAudioProcessor<SampleType>::configure),
             Napi::ObjectWrap<KrispAudioProcessor<SampleType>>::InstanceMethod("processFrames", &KrispAudioProcessor<SampleType>::processFrames),
         });
 
-        Napi::FunctionReference* constructor = new Napi::FunctionReference();
+        Napi::FunctionReference *constructor = new Napi::FunctionReference();
         *constructor = Napi::Persistent(func);
         exports.Set(nodeClassName, func);
         env.SetInstanceData(constructor);
@@ -43,13 +43,13 @@ public:
         return exports;
     }
 
-    KrispAudioProcessor(const Napi::CallbackInfo& info) : Napi::ObjectWrap<KrispAudioProcessor>(info) {
+    KrispAudioProcessor(const Napi::CallbackInfo &info) : Napi::ObjectWrap<KrispAudioProcessor>(info) {
         Napi::Env env = info.Env();
         Napi::HandleScope scope(env);
     }
 
-    Napi::Value configure(const Napi::CallbackInfo& info);
-    Napi::Value processFrames(const Napi::CallbackInfo& info);
+    Napi::Value configure(const Napi::CallbackInfo &info);
+    Napi::Value processFrames(const Napi::CallbackInfo &info);
 
 private:
     SamplingRate m_krispSampleRate = static_cast<SamplingRate>(0);
@@ -78,7 +78,7 @@ static std::pair<SamplingRate, bool> getKrispSamplingRate(uint32_t rate) {
 }
 
 template <class SampleType>
-Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo& info) {
+Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
@@ -121,9 +121,9 @@ Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo&
         m_frameSize = static_cast<unsigned int>(sampleRate) * static_cast<unsigned int>(frameDuration) / 1000;
         m_frameSizeInBytes = m_frameSize * sizeof(SampleType);
 
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> wstringConverter;
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
         ModelInfo ncModelInfo;
-        ncModelInfo.path = wstringConverter.from_bytes(modelPath);
+        ncModelInfo.path = converter.from_bytes(modelPath);
 
         bool withStats = false;
         NcSessionConfig ncCfg = {m_krispSampleRate, frameDuration, m_krispSampleRate, &ncModelInfo, withStats, nullptr};
@@ -133,7 +133,7 @@ Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo&
             throw std::runtime_error("Failed to create Krisp NC session");
         }
     }
-    catch (const std::exception& ex) {
+    catch (const std::exception &ex) {
         Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
         return env.Null();
     }
@@ -146,7 +146,7 @@ Napi::Value KrispAudioProcessor<SampleType>::configure(const Napi::CallbackInfo&
 }
 
 template <class SampleType>
-Napi::Value KrispAudioProcessor<SampleType>::processFrames(const Napi::CallbackInfo& info) {
+Napi::Value KrispAudioProcessor<SampleType>::processFrames(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
@@ -191,7 +191,7 @@ Napi::Value KrispAudioProcessor<SampleType>::processFrames(const Napi::CallbackI
             );
         }
     }
-    catch (const std::exception& ex) {
+    catch (const std::exception &ex) {
         Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
         return env.Null();
     }
@@ -199,20 +199,18 @@ Napi::Value KrispAudioProcessor<SampleType>::processFrames(const Napi::CallbackI
         Napi::Error::New(env, "Unknown error during processing").ThrowAsJavaScriptException();
         return env.Null();
     }
-
     return env.Undefined();
 }
 
 void CleanupKrisp(void*) {
-    // We don't need to call globalDestroy() as it might affect other processes
-    // The OS will clean up resources when the process exits
+    // No explicit call to globalDestroy() is necessary.
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     try {
-        globalInit(L"");  // Empty string for default working path
+        globalInit(L""); // Use default working path.
     }
-    catch (const std::exception& ex) {
+    catch (const std::exception &ex) {
         Napi::Error::New(env, ex.what()).ThrowAsJavaScriptException();
         return Napi::Object::New(env);
     }

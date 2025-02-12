@@ -9,8 +9,9 @@ class KrispProcessor {
         this.sampleSize = 2; // PCM16 = 2 bytes per sample
     }
 
+    // Returns the number of samples for a 10ms frame
     getFrameSize() {
-        return Math.floor(this.sampleRate * 0.01); // 10ms frame size
+        return Math.floor(this.sampleRate * 0.01);
     }
 
     initialize() {
