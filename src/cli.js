@@ -3,7 +3,7 @@ const { WaveFile } = require('wavefile');
 const KrispProcessor = require('./lib/krisp-processor');
 
 class AudioProcessor {
-    constructor(modelPath, sampleRate = 8000) {
+    constructor(modelPath, sampleRate = 16000) {
         this.processor = new KrispProcessor(modelPath, sampleRate);
         this.processor.initialize();
         this.sampleRate = sampleRate;
