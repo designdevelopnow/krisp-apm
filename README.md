@@ -83,7 +83,7 @@ Create a `.env` file in the root directory with the following variables:
 ```env
 NODE_ENV=production
 PORT=3000
-KRISP_MODEL_PATH=./krisp/models/c7.n.s.9f4389.kef
+KRISP_MODEL_PATH=./krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef
 MAX_CONNECTIONS=10
 ```
 
@@ -131,10 +131,4 @@ sudo docker run -d \
   -v /opt/caretalk-krisp-apm/.env:/usr/src/app/.env \
   --name caretalk-krisp-apm \
   caretalk/krisp-apm:v1
-```
-
-
-##### Using Cli
-```bash
-node src/cli.js -i data/audio/dog-bark.wav -o clean.wav -m krisp/models/c7.n.s.9f4389.kef 
 ```
