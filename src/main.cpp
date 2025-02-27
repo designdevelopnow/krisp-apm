@@ -32,11 +32,11 @@ using boost::asio::ip::tcp;
 std::mutex log_mutex;
 void log_info(const std::string& msg) {
     std::lock_guard<std::mutex> lock(log_mutex);
-    std::cout << "[INFO] " << msg << "\n";
+    std::cout << "[INFO] " << msg << std::endl;
 }
 void log_error(const std::string& msg) {
     std::lock_guard<std::mutex> lock(log_mutex);
-    std::cerr << "[ERROR] " << msg << "\n";
+    std::cerr << "[ERROR] " << msg << std::endl;
 }
 
 // Constants for 16 kHz PCM16.
@@ -52,11 +52,12 @@ static constexpr size_t buffer_size = samples_per_20ms * bytes_per_sample; // 64
 //
 class session : public std::enable_shared_from_this<session> {
 public:
-    session(tcp::socket socket, const std::string& model_path, float noiseSuppressionLevel, std::atomic<int>& activeCount)
+    session(tcp::socket socket, const std::string& model_path, float noiseSuppressionLevel, std::atomic<int>& activeCount, std::atomic<int>& totalCount)
         : socket_(std::move(socket)),
           strand_(boost::asio::make_strand(socket_.get_executor())),
           noiseSuppressionLevel_(noiseSuppressionLevel),
-          connectionCount_(activeCount)
+          connectionCount_(activeCount),
+          totalConnections_(totalCount)
     {
         try {
             remoteAddress_ = socket_.remote_endpoint().address().to_string();
@@ -66,7 +67,8 @@ public:
         // Increase active connection count.
         ++connectionCount_;
         log_info("New connection accepted from " + remoteAddress_ +
-                 " total active connection: " + std::to_string(connectionCount_.load()));
+                 " | Active: " + std::to_string(connectionCount_.load()) +
+                 " | Total: " + std::to_string(totalConnections_.load()));
 
         // Create a dedicated Krisp session for this connection.
         std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -88,7 +90,8 @@ public:
     ~session() {
         --connectionCount_;
         log_info("Connection closed from " + remoteAddress_ +
-                 " total active connection: " + std::to_string(connectionCount_.load()));
+                 " | Active: " + std::to_string(connectionCount_.load()) +
+                 " | Total: " + std::to_string(totalConnections_.load()));
     }
 
     void start() {
@@ -149,6 +152,7 @@ private:
     float noiseSuppressionLevel_;
     std::string remoteAddress_;
     std::atomic<int>& connectionCount_;
+    std::atomic<int>& totalConnections_;
 };
 
 //
@@ -164,7 +168,8 @@ public:
           model_path_(model_path),
           noiseSuppressionLevel_(noiseSuppressionLevel),
           maxConnections_(maxConnections),
-          activeConnections_(0)
+          activeConnections_(0),
+          totalConnections_(0)
     {
         try {
             log_info("Server listening on " + acceptor_.local_endpoint().address().to_string() +
@@ -202,7 +207,8 @@ private:
                                   socket.remote_endpoint().address().to_string());
                         socket.close();
                     } else {
-                        std::make_shared<session>(std::move(socket), model_path_, noiseSuppressionLevel_, activeConnections_)->start();
+                        ++totalConnections_;
+                        std::make_shared<session>(std::move(socket), model_path_, noiseSuppressionLevel_, activeConnections_, totalConnections_)->start();
                     }
                 } else {
                     log_error("Accept error: " + ec.message());
@@ -219,6 +225,7 @@ private:
     float noiseSuppressionLevel_;
     int maxConnections_;
     std::atomic<int> activeConnections_;
+    std::atomic<int> totalConnections_;
 };
 
 //
@@ -233,6 +240,10 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: apm-krisp-nc <port> <model_path> [noise_suppression_level] [max_connections] [shutdown_timeout_sec]\n";
         return 1;
     }
+
+    std::cout.sync_with_stdio(false);
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
 
     short port = static_cast<short>(std::atoi(argv[1]));
     std::string model_path = argv[2];
