@@ -1,14 +1,10 @@
 # Krisp APM Server
 
-A Node.js server for audio processing using Krisp SDK.
-
 ## Prerequisites
 
-- Node.js 20.x or higher
-- npm
 - cmake
 - build-essential
-- libsndfile1-dev
+- libboost-all-dev
 
 ## Installation
 
@@ -18,66 +14,42 @@ git clone git@github.com:designdevelopnow/krisp-apm.git
 cd krisp-apm
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Build the native module:
+2.Build
 ```bash
 make
 ```
 
 ## Running the Server
 
-### Using Node.js Directly
-
-1. Start the server:
 ```bash
-node src/server/server.js
+./bin/apm-krisp-nc 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 10 120
 ```
-
-2. Run the test client:
-```bash
-node src/client/test-client.js <path-to-wav-file>
-```
+Here are the arguments:
+1. Port number
+2. Path to Krisp model
+3. max connections
+4. Shutdown timeout for graceful shutdown. 
 
 ### Using Docker
 
 1. Build and start using Docker Compose:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 2. Stop the container:
 ```bash
-docker-compose down
+docker compose down
 ```
 
-## Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```env
-NODE_ENV=production
-PORT=3000
-KRISP_MODEL_PATH=./krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef
-MAX_CONNECTIONS=10
+### Testing
+```bash
+./test/nc-inb-server-test-driver.sh
 ```
-
-## Metrics
-
-Server metrics are available at:
+### Clean an input slin16 wav file 
+```bash
+./test/nc-inb-server-test-driver.sh input.wav $PWD/output.wav
 ```
-http://localhost:3001
-```
-
-This endpoint returns:
-- Active connections
-- Total connections
-- Peak connections
-
-
 ## Deploy using docker
 
 ### Build Image
@@ -93,20 +65,15 @@ scp caretalk-krisp-apm-v1.tar.gz user@remote_host:~/
 
 ### Load image
 ```
-sudo docker load -i caretalk-krisp-apm-v1.tar.gz
+docker load -i caretalk-krisp-apm-v1.tar.gz
 ```
 
-### Run 
-
-# Prod
-
+### Run
 ```bash
-sudo docker stop caretalk-krisp-apm
-sudo docker rm caretalk-krisp-apm
-sudo docker run -d \
+docker stop caretalk-krisp-apm
+docker rm caretalk-krisp-apm
+docker run -d \
   -p 3344:3344 \
-  -v /opt/caretalk-krisp-apm/logs:/usr/src/app/logs \
-  -v /opt/caretalk-krisp-apm/.env:/usr/src/app/.env \
   --name caretalk-krisp-apm \
-  caretalk/krisp-apm:v1
+  caretalk/krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 20 120
 ```

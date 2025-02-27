@@ -3,6 +3,7 @@
 set -e
 
 INPUT_FILE=${1:-test/input/input-slin16.wav}
+OUTPUT_FILE=${2:-$PWD/test/output/output-slin16.wav}
 
 check_npm_package() {
     if node -e "require.resolve('$1')" 2>/dev/null; then
@@ -31,4 +32,4 @@ trap cleanup EXIT
 
 sleep 2
 
-node test/test-client.js $INPUT_FILE $PWD/test/output/output-slin16.wav 3344 localhost
+node test/test-client.js $INPUT_FILE $OUTPUT_FILE 3344 localhost
