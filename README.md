@@ -42,28 +42,6 @@ node src/server/server.js
 node src/client/test-client.js <path-to-wav-file>
 ```
 
-### Using PM2
-
-1. Start the server with PM2:
-```bash
-pm2 start ecosystem.config.js
-```
-
-2. View logs:
-```bash
-pm2 logs
-```
-
-3. Monitor the application:
-```bash
-pm2 monit
-```
-
-4. Stop the server:
-```bash
-pm2 stop ecosystem.config.js
-```
-
 ### Using Docker
 
 1. Build and start using Docker Compose:

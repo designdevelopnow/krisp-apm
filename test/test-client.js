@@ -129,6 +129,7 @@ class AudioClient {
                     console.log(`Average latency: ${avgLatency.toFixed(2)}ms per frame`);
                     console.log(`Total bytes sent: ${totalBytesSent}`);
                     console.log(`Total bytes received: ${totalBytesReceived}`);
+                    console.log(`Output file generated: ${outputFile}`);
 
                     resolve();
                 } catch (err) {
@@ -154,15 +155,17 @@ class AudioClient {
 
 // Run as command-line tool if called directly
 if (require.main === module) {
-    if (process.argv.length !== 4) {
-        console.error('Usage: node test-client.js <input-wav> <output-wav>');
+    if (process.argv.length < 4) {
+        console.error('Usage: node test-client.js <input-wav> <output-wav>  [port] [host]');
         process.exit(1);
     }
 
     const inputFile = process.argv[2];
     const outputFile = process.argv[3];
+    const port = process.argv[4] ?? '3344';
+    const host = process.argv[5] ?? 'localhost';
 
-    const client = new AudioClient();
+    const client = new AudioClient(host, port);
     client.processFile(inputFile, outputFile)
         .catch(err => {
             console.error('Error:', err.message);

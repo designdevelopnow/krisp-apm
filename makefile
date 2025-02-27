@@ -1,6 +1,6 @@
 .PHONY: build run clean
 
-KRISP_SDK_PATH := $(shell pwd)/krisp/sdk/krisp-audio-sdk-9.0.0-lin_x64-nc
+KRISP_SDK_PATH := $(shell pwd)/krisp/sdk/krisp-audio-sdk-9.2.0-server-lin_x64/static
 
 build:
 	mkdir -p build

@@ -239,7 +239,7 @@ private:
 int main(int argc, char* argv[]) {
     // Usage: server <port> <model_path> [noise_suppression_level] [max_connections] [shutdown_timeout_sec]
     if (argc < 3) {
-        std::cerr << "Usage: server <port> <model_path> [noise_suppression_level] [max_connections] [shutdown_timeout_sec]\n";
+        std::cerr << "Usage: apm-krisp-nc <port> <model_path> [noise_suppression_level] [max_connections] [shutdown_timeout_sec]\n";
         return 1;
     }
 
