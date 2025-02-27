@@ -15,7 +15,6 @@
 
 #include <boost/asio.hpp>
 
-// Krisp SDK includes
 #include <krisp-audio-sdk.hpp>
 #include <krisp-audio-sdk-nc.hpp>
 
@@ -41,10 +40,9 @@ void log_error(const std::string& msg) {
 }
 
 // Constants for 16 kHz PCM16.
-// Each 10-ms frame contains 160 samples; a 20-ms chunk contains 320 samples (640 bytes).
+// Each 20-ms chunk contains 320 samples (640 bytes).
 static constexpr size_t sample_rate = 16000;
-static constexpr size_t samples_per_10ms = sample_rate * 10 / 1000; // 160 samples
-static constexpr size_t samples_per_20ms = samples_per_10ms * 2;    // 320 samples
+static constexpr size_t samples_per_20ms = sample_rate * 20 / 1000;    // 320 samples
 static constexpr size_t bytes_per_sample = sizeof(int16_t);         // 2 bytes
 static constexpr size_t buffer_size = samples_per_20ms * bytes_per_sample; // 640 bytes
 
@@ -77,7 +75,7 @@ public:
 
         NcSessionConfig ncCfg{
             SamplingRate::Sr16000Hz,   // Input sampling rate
-            FrameDuration::Fd10ms,      // Processing frame duration (10ms)
+            FrameDuration::Fd20ms,      // Processing frame duration (20ms)
             SamplingRate::Sr16000Hz,    // Output sampling rate (same as input)
             &ncModelInfo,              // Model info
             false,                     // Disable per-frame stats (enable if needed)
@@ -121,16 +119,9 @@ private:
         const int16_t* in_samples = reinterpret_cast<const int16_t*>(read_buffer_.data());
         int16_t* out_samples = reinterpret_cast<int16_t*>(write_buffer_.data());
 
-        // Process first 10-ms frame.
-        ncSession_->process(in_samples, samples_per_10ms,
-                            out_samples, samples_per_10ms,
+        ncSession_->process(in_samples, samples_per_20ms,
+                            out_samples, samples_per_20ms,
                             noiseSuppressionLevel_, nullptr);
-
-        // Process second 10-ms frame.
-        ncSession_->process(in_samples + samples_per_10ms, samples_per_10ms,
-                            out_samples + samples_per_10ms, samples_per_10ms,
-                            noiseSuppressionLevel_, nullptr);
-
         do_write();
     }
 
