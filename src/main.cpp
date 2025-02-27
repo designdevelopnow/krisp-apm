@@ -105,13 +105,16 @@ private:
             boost::asio::buffer(read_buffer_),
             boost::asio::transfer_exactly(buffer_size),
             boost::asio::bind_executor(strand_,
-                [this, self](boost::system::error_code ec, std::size_t) {
+                [this, self](boost::system::error_code ec, std::size_t bytes_transferred) {
                     if (!ec) {
                         process_chunk();
-                    } else if (ec == boost::asio::error::eof) {
-                        log_info("Connection closed gracefully by " + remoteAddress_);
                     } else {
-                        log_error("Read error (" + remoteAddress_ + "): " + ec.message());
+                        if (ec == boost::asio::error::eof || ec == boost::asio::error::connection_reset) {
+                            log_info("Client disconnected: " + remoteAddress_);
+                        } else {
+                            log_error("Read error (" + remoteAddress_ + "): " + ec.message());
+                        }
+                        socket_.close();
                     }
                 }
             )
