@@ -25,6 +25,7 @@ using Krisp::AudioSdk::Nc;
 using Krisp::AudioSdk::ModelInfo;
 using Krisp::AudioSdk::FrameDuration;
 using Krisp::AudioSdk::SamplingRate;
+using Krisp::AudioSdk::SessionStats;
 
 using boost::asio::ip::tcp;
 
@@ -80,7 +81,7 @@ public:
             FrameDuration::Fd20ms,      // Processing frame duration (20ms)
             SamplingRate::Sr16000Hz,    // Output sampling rate (same as input)
             &ncModelInfo,              // Model info
-            false,                     // Disable per-frame stats (enable if needed)
+            true,                     // Disable per-frame stats (enable if needed)
             nullptr                    // No ringtone config
         };
 
@@ -92,6 +93,9 @@ public:
         log_info("Connection closed from " + remoteAddress_ +
                  " | Active: " + std::to_string(connectionCount_.load()) +
                  " | Total: " + std::to_string(totalConnections_.load()));
+
+        printNcStats();
+        ncSession_.reset();
     }
 
     void start() {
@@ -118,6 +122,19 @@ private:
                     }
                 }
             )
+        );
+    }
+
+    void printNcStats()
+    {
+        SessionStats ncSessionStats;
+        ncSession_->getSessionStats(&ncSessionStats);
+        log_info(std::string("#--- Session stats ---") +
+            "\n# - No Noise: " + std::to_string(ncSessionStats.noiseStats.noNoiseMs) + " ms" +
+            "\n# - Low Noise: " + std::to_string(ncSessionStats.noiseStats.lowNoiseMs) + " ms" +
+            "\n# - Medium Noise: " + std::to_string(ncSessionStats.noiseStats.mediumNoiseMs) + " ms" +
+            "\n# - High Noise: " + std::to_string(ncSessionStats.noiseStats.highNoiseMs) + " ms" +
+            "\n# - Talk Time: " + std::to_string(ncSessionStats.voiceStats.talkTimeMs) + " ms"
         );
     }
 
@@ -307,7 +324,8 @@ int main(int argc, char* argv[]) {
 
         // Run io_context on a thread pool.
         std::vector<std::thread> threads;
-        unsigned int thread_count = std::thread::hardware_concurrency();
+//        unsigned int thread_count = std::thread::hardware_concurrency();
+        unsigned int thread_count = 1;
         if (thread_count == 0)
             thread_count = 2;
         for (unsigned int i = 0; i < thread_count; ++i) {
