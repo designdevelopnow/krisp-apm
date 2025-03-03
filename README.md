@@ -77,5 +77,5 @@ docker rm caretalk-krisp-apm
 docker run -d \
   -p 3344:3344 \
   --name caretalk-krisp-apm \
-  caretalk/krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 20 120
+  caretalk/krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 20 120
 ```
