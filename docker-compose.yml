@@ -8,4 +8,4 @@ services:
     ports:
       - "3344:3344"
     restart: unless-stopped
-    command: [ "3344", "krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef", "10", "120"]
+    command: [ "3344", "krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef", "100.0", "10", "120"]

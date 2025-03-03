@@ -22,13 +22,15 @@ make
 ## Running the Server
 
 ```bash
-./bin/apm-krisp-nc 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 10 120
+export OPENBLAS_NUM_THREADS=1
+./bin/apm-krisp-nc 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 10 120
 ```
 Here are the arguments:
 1. Port number
 2. Path to Krisp model
-3. max connections
-4. Shutdown timeout for graceful shutdown. 
+3. Noise Suppression Level
+4. Max connections
+5. Shutdown timeout for graceful shutdown. 
 
 ### Using Docker
 

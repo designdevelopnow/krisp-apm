@@ -325,6 +325,7 @@ int main(int argc, char* argv[]) {
         // Run io_context on a thread pool.
         std::vector<std::thread> threads;
 //        unsigned int thread_count = std::thread::hardware_concurrency();
+//        for now run on 1 thread
         unsigned int thread_count = 1;
         if (thread_count == 0)
             thread_count = 2;

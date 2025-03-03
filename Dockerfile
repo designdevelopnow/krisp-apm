@@ -20,6 +20,8 @@ RUN strip --strip-unneeded bin/apm-krisp-nc
 
 FROM debian:bookworm-slim
 
+ENV OPENBLAS_NUM_THREADS=1
+
 RUN apt-get update && apt-get install -y --no-install-recommends dumb-init && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/local/bin
