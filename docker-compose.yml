@@ -4,10 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: caretalk/krisp-apm:v1
+    container_name: caretalk-krisp-apm
     ports:
       - "3344:3344"
-      - "3345:3345"
-    volumes:
-      - ./logs:/usr/src/app/logs
-      - .env:/usr/src/app/.env
     restart: unless-stopped
+    command: [ "3344", "krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef", "100.0", "10", "120"]
