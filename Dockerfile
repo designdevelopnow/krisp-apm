@@ -1,6 +1,7 @@
 FROM node:22-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV OPENBLAS_NUM_THREADS=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libstdc++6 \
