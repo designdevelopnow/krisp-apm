@@ -1,81 +1,129 @@
 # Krisp APM Server
 
-## Prerequisites
+Krisp APM Server is a high-performance C++ server for real-time noise suppression, powered by the Krisp AI SDK. Designed for telephony and voice AI applications, it wraps Krisp’s model in a lightweight TCP server optimized for low latency and multi-connection handling.
+
+---
+
+## 🌟 Features
+
+- Real-time SLIN16 audio noise cancellation
+- Lightweight and multithreaded TCP server
+- Docker-ready for deployment
+- Includes CLI and test utilities
+- Ideal for voice assistants, VoIP, and telephony pipelines
+
+---
+
+## 🔧 Prerequisites
+
+Install the following dependencies:
 
 - cmake
 - build-essential
 - libboost-all-dev
 
-## Installation
+---
 
-1. Clone the repository:
-```bash
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```
 git clone git@github.com:designdevelopnow/krisp-apm.git
 cd krisp-apm
 ```
 
-2.Build
-```bash
+### 2. Build the Project
+
+```
 make
 ```
 
-## Running the Server
+---
 
-```bash
-export OPENBLAS_NUM_THREADS=1
-./bin/apm-krisp-nc 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 10 120
+## 🧪 Running the Server
+
 ```
-Here are the arguments:
-1. Port number
-2. Path to Krisp model
-3. Noise Suppression Level
-4. Max connections
-5. Shutdown timeout for graceful shutdown. 
+export OPENBLAS_NUM_THREADS=1
+./bin//apm-krisp-nc <PORT> <MODEL_PATH> <NS_LEVEL> <MAX_CONNECTIONS> <SHUTDOWN_TIMEOUT>
+```
 
-### Using Docker
+**Arguments:**
+- <PORT>: Port to listen on (e.g. 3344)
+- <MODEL_PATH>: Path to .kef Krisp model file
+- <NS_LEVEL>: Noise suppression level (e.g. 100.0)
+- <MAX_CONNECTIONS>: Maximum simultaneous connections
+- <SHUTDOWN_TIMEOUT>: Graceful shutdown timeout in seconds
 
-1. Build and start using Docker Compose:
-```bash
+---
+
+## 🐳 Docker Usage
+
+### Build and Run
+
+```
 docker compose up --build
 ```
 
-2. Stop the container:
-```bash
+### Stop
+
+```
 docker compose down
 ```
 
-### Testing
-```bash
+---
+
+## 🔁 Testing
+
+### Run Test Driver
+
+```
 ./test/nc-inb-server-test-driver.sh
 ```
-### Clean an input slin16 wav file 
-```bash
-./test/nc-inb-server-test-driver.sh input.wav $PWD/output.wav
-```
-## Deploy using docker
 
-### Build Image
-```bash
+### Clean a SLIN16 .wav File
+
+```
+./test/nc-inb-server-test-driver.sh input.wav ./output.wav
+```
+
+---
+
+## 📦 Deployment with Docker
+
+### Build Docker Image
+
+```
 docker compose build
-docker save -o caretalk-krisp-apm-v1.tar caretalk/krisp-apm:v1
-gzip caretalk-krisp-apm-v1.tar
-```
-### Copy image
-```bash
-scp caretalk-krisp-apm-v1.tar.gz user@remote_host:~/
 ```
 
-### Load image
-```
-docker load -i caretalk-krisp-apm-v1.tar.gz
-```
 
-### Run
-```bash
-docker stop caretalk-krisp-apm
-docker rm caretalk-krisp-apm
+### Run the Container
+
+```
 docker run -d \
-  -p 3344:3344 \
-  --name caretalk-krisp-apm \
-  caretalk/krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 20 120
+-p 3344:3344 \
+--name krisp-apm \
+krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 20 120
 ```
+
+---
+
+## 🙌 Contributing
+
+We welcome contributions!
+
+- Report bugs and request features via GitHub Issues
+- Submit improvements via Pull Requests
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 📫 Contact
+
+Have questions or suggestions? Please open an issue or start a discussion on GitHub.
