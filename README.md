@@ -1,6 +1,6 @@
 # Krisp APM Server
 
-Krisp APM Server is a high-performance C++ server for real-time noise suppression, powered by the Krisp AI SDK. Designed for telephony and voice AI applications, it wraps Krisp’s model in a lightweight TCP server optimized for low latency and multi-connection handling.
+Krisp APM Server is a high-performance C++ server for real-time noise suppression, powered by the Krisp AI SDK. Originally developed for Caretalk.ai. Designed for telephony and voice AI applications, it wraps Krisp’s model in a lightweight TCP server optimized for low latency and multi-connection handling.
 
 ---
 
@@ -114,13 +114,12 @@ krisp-apm:v1 3344 krisp/models/inb.bvc.hs.c6.w.s.23cdb3.kef 100.0 20 120
 We welcome contributions!
 
 - Report bugs and request features via GitHub Issues
-- Submit improvements via Pull Requests
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. This repo does not include Krisp’s proprietary model files. You must obtain a valid Krisp SDK license to use this software.
 
 ---
 
